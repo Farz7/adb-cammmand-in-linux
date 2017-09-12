@@ -13,6 +13,7 @@ adb shell    // Open or run commands in a terminal on the host Android device.
 == Devices
 adb usb
 adb devices   //show devices attached
+adb connect ip_address_of_device
 
 == LogCat
 adb logcat
@@ -53,13 +54,22 @@ adb shell am start -W -c android.intent.category.HOME -a android.intent.action.M
 
 == Activity Manager
 adb shell am start -a android.intent.action.VIEW
-
+adb shell am broadcast -a 'my_action'
 
 adb shell am start -a android.intent.action.CALL -d tel:+972527300294 // Make a call
 
 // Open send sms screen with phone number and the message:
 adb shell am start -a android.intent.action.SENDTO -d sms:+972527300294   --es  sms_body "Test --ez exit_on_sent false
 
+// Reset permissions
+adb shell pm reset-permissions -p your.app.package 
+
+// Emulate device
+adb shell wm size 2048x1536
+adb shell wm density 288
+// And reset to default
+adb shell wm size reset
+adb shell wm density reset
 
 == Print text
 adb shell input text 'Wow, it so cool feature'
