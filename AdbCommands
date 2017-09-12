@@ -42,6 +42,7 @@ adb uninstall <app .apk name>
 adb uninstall -k <app .apk name> -> "Uninstall .apk withour deleting data"
 
 adb shell pm uninstall com.example.MyApp
+adb shell pm clear [package] // Deletes all data associated with a package.
 
 adb devices | tail -n +2 | cut -sf 1 | xargs -IX adb -s X uninstall com.myAppPackage //Uninstall the given app from all connected devices
 
@@ -63,6 +64,9 @@ adb shell am start -a android.intent.action.SENDTO -d sms:+972527300294   --es  
 
 // Reset permissions
 adb shell pm reset-permissions -p your.app.package 
+adb shell pm grant [packageName] [ Permission]  // Grant a permission to an app. 
+adb shell pm revoke [packageName] [ Permission]   // Revoke a permission from an app.
+
 
 // Emulate device
 adb shell wm size 2048x1536
