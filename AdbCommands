@@ -15,6 +15,9 @@ adb usb
 adb devices   //show devices attached
 adb connect ip_address_of_device
 
+== Get device android version
+adb shell getprop ro.build.version.release 
+
 == LogCat
 adb logcat
 adb logcat -c // clear // The parameter -c will clear the current logs on the device.
@@ -152,3 +155,56 @@ adb shell 'am broadcast -a org.example.app.sp.PUT --es key long --el value 92233
 # Restart application process after making changes
 adb shell 'am broadcast -a org.example.app.sp.CLEAR --ez restart true'
 --------------------------------------------------------------------------------
+
+=== Few bash snippets ===
+@Source (https://jonfhancock.com/bash-your-way-to-better-android-development-1169bc3e0424)
+
+=== Using tail -n
+//Use tail to remove the first line. Actually two lines. The first one is just a newline. The second is “List of devices attached.”
+$ adb devices | tail -n +2
+
+=== Using cut -sf
+// Cut the last word and any white space off the end of each line.
+$ adb devices | tail -n +2 | cut -sf -1
+
+=== Using xargs -I
+// Given the -I option, xargs will perform an action for each line of text that we feed into it.
+// We can give the line a variable name to use in commands that xargs can execute.
+$ adb devices | tail -n +2 | cut -sf -1 | xargs -I X echo X aw yiss
+
+=== Three options below together
+// Will print android version of all connected devices
+adb devices | tail -n +2 | cut -sf -1 | xargs -I X adb -s X shell getprop ro.build.version.release  
+
+=== Using alias
+-- Example 1 
+alias tellMeMore=echo
+tellMeMore "hi there"
+Output => hi there
+-- Example 2
+// Define alias
+alias apkinstall="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X install -r $1"
+// And you can use it later 
+apkinstall ~/Downloads/MyAppRelease.apk  // Install an apk on all devices
+-- Example 3
+alias rmapp="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X uninstall $1"
+rmapp com.example.myapp // Uninstall a package from all devices
+-- Example 4
+alias clearapp="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X shell pm clear $1"
+clearapp com.example.myapp  // Clear data on all devices (leave installed)
+-- Example 5
+alias startintent="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X shell am start $1"
+startintent https://twitter.com/JonFHancock // Launch a deep link on all devices
+
+
+Setting up your .bash_profile
+Finally, to make this all reusable even after rebooting your computer (aliases only last through the current session), we have to add these to your .bash_profile. You might or might not already have a .bash_profile, so let’s make sure we append to it rather than overwriting it. Just open a terminal, and run the following command
+
+touch .bash_profile && open .bash_profile
+
+This will create it if it doesn’t already exist, and open it in a text editor either way. Now just copy and paste all of the aliases into it, save, and close.
+
+alias startintent="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X shell am start $1"
+alias apkinstall="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X install -r $1"
+alias rmapp="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X uninstall $1"
+alias clearapp="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X shell pm clear $1"
