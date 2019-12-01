@@ -1,3 +1,5 @@
+adb help // List all comands
+
 == Adb Server
 adb kill-server
 adb start-server 
@@ -6,6 +8,7 @@ adb start-server
 adb reboot
 adb reboot recovery 
 adb reboot-bootloader
+adb root //restarts adb with root permissions
 
 == Shell
 adb shell    // Open or run commands in a terminal on the host Android device.
@@ -13,6 +16,7 @@ adb shell    // Open or run commands in a terminal on the host Android device.
 == Devices
 adb usb
 adb devices   //show devices attached
+adb devices -l //devices (product/model)
 adb connect ip_address_of_device
 
 == Get device android version
@@ -141,6 +145,71 @@ adb shell 'am broadcast -a org.example.app.sp.CLEAR --ez restart true'
 == Monkey
 adb shell monkey -p com.myAppPackage -v 10000 -s 100 // monkey tool is generating 10.000 random events on the real device
 
+== Paths
+/data/data/<package>/databases (app databases)
+/data/data/<package>/shared_prefs/ (shared preferences)
+/data/app (apk installed by user)
+/system/app (pre-installed APK files)
+/mmt/asec (encrypted apps) (App2SD)
+/mmt/emmc (internal SD Card)
+/mmt/adcard (external/Internal SD Card)
+/mmt/adcard/external_sd (external SD Card)
+
+adb shell ls (list directory contents)
+adb shell ls -s (print size of each file)
+adb shell ls -R (list subdirectories recursively)
+
+== Device onformation
+adb get-statе (print device state)
+adb get-serialno (get the serial number)
+adb shell dumpsys iphonesybinfo (get the IMEI)
+adb shell netstat (list TCP connectivity)
+adb shell pwd (print current working directory)
+adb shell dumpsys battery (battery status)
+adb shell pm list features (list phone features)
+adb shell service list (list all services)
+adb shell dumpsys activity <package>/<activity> (activity info)
+adb shell ps (print process status)
+adb shell wm size (displays the current screen resolution)
+dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp' (print current app's opened activity)
+
+== Package info
+adb shell list packages (list package names)
+adb shell list packages -r (list package name + path to apks)
+adb shell list packages -3 (list third party package names)
+adb shell list packages -s (list only system packages)
+adb shell list packages -u (list package names + uninstalled)
+adb shell dumpsys package packages (list info on all apps)
+adb shell dump <name> (list info on one package)
+adb shell path <package> (path to the apk file)
+
+==Configure Settings Commands
+adb shell dumpsys battery set level <n> (change the level from 0 to 100)
+adb shell dumpsys battery set status<n> (change the level to unknown, charging, discharging, not charging or full)
+adb shell dumpsys battery reset (reset the battery)
+adb shell dumpsys battery set usb <n> (change the status of USB connection. ON or OFF)
+adb shell wm size WxH (sets the resolution to WxH)
+
+
+== Device Related Commands
+adb reboot-recovery (reboot device into recovery mode)
+adb reboot fastboot (reboot device into recovery mode)
+adb shell screencap -p "/path/to/screenshot.png" (capture screenshot)
+adb shell screenrecord "/path/to/record.mp4" (record device screen)
+adb backup -apk -all -f backup.ab (backup settings and apps)
+adb backup -apk -shared -all -f backup.ab (backup settings, apps and shared storage)
+adb backup -apk -nosystem -all -f backup.ab (backup only non-system apps)
+adb restore backup.ab (restore a previous backup)
+adb shell am start|startservice|broadcast <INTENT>[<COMPONENT>]
+-a <ACTION> e.g. android.intent.action.VIEW
+-c <CATEGORY> e.g. android.intent.category.LAUNCHER (start activity intent)
+
+adb shell am start -a android.intent.action.VIEW -d URL (open URL)
+adb shell am start -t image/* -a android.intent.action.VIEW (opens gallery)
+
+== Logs
+adb logcat [options] [filter] [filter] (view device log)
+adb bugreport (print bug reports)
 
 == Other
 adb backup // Create a full backup of your phone and save to the computer.
@@ -233,3 +302,9 @@ alias startintent="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X sh
 alias apkinstall="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X install -r $1"
 alias rmapp="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X uninstall $1"
 alias clearapp="adb devices | tail -n +2 | cut -sf 1 | xargs -I X adb -s X shell pm clear $1"
+
+
+===============================================================
+Sources:
+- Internet
+- https://www.automatetheplanet.com/adb-cheat-sheet/
